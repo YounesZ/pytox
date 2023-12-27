@@ -12,10 +12,13 @@ def find_cumulative_threshold(x, y, thresh):
     # Compute cumulative distribution
     y_c = np.cumsum(y_)
 
+    # Compute average price
+    avg = np.sum(y_ * x)
+
     # Check if interpolation is needed
     if thresh in y_c:
         ix__ = np.where(y_c==thresh)[0][0]
-        return ix__, x[ix__]
+        return ix__, x[ix__], avg
     else: # interpolate
         lower = np.sum(thresh > y_c) - 1
         # X index
@@ -24,7 +27,7 @@ def find_cumulative_threshold(x, y, thresh):
         # X value
         ii = (thresh - y_c[lower]) * x[lower + 1] + (y_c[lower + 1] - thresh) * x[lower]
         ii = ii / (y_c[lower + 1] - y_c[lower])
-        return ix, ii
+        return ix, ii, avg
 
 
 def find_proba_for_value(x, y, value):
