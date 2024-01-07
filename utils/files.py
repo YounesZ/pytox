@@ -1,4 +1,6 @@
 import os
+from shutil import rmtree
+
 
 def remove_folder_contents(folder_path):
     # Iterate over all files and subfolders in the given folder
@@ -11,7 +13,7 @@ def remove_folder_contents(folder_path):
 
         # If the item is a directory, recursively remove its contents
         elif os.path.isdir(item_path):
-            remove_folder_contents(item_path)
+            rmtree(item_path)
 
 
 def create_folder(folder_path):
