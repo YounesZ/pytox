@@ -1,3 +1,4 @@
+import requests
 
 
 def check_email_adress(email):
@@ -16,5 +17,25 @@ def check_email_adress(email):
         message = [False, 'email adress is not a valid string']
 
     return message
+
+
+def download_image(url, save_path):
+    try:
+        # Send a GET request to the URL
+        response = requests.get(url)
+        response.raise_for_status()  # Check if the request was successful
+
+        # Get the content of the response
+        image_content = response.content
+
+        # Save the image content to a local file
+        with open(save_path, 'wb') as file:
+            file.write(image_content)
+
+        print(f"Image downloaded successfully and saved at {save_path}")
+
+    except requests.exceptions.RequestException as e:
+        print(f"Error downloading image from {url}: {e}")
+
 
 

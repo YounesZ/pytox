@@ -4,7 +4,7 @@ from io import StringIO
 from json import dumps
 from psycopg2 import DatabaseError, connect
 from apps.home.config.postgres import HDR_MAPPING
-from apps.lib.pytox.utils.data_structures import is_list_of_strings
+from submodules.pytox.utils.data_structures import is_list_of_strings
 
 
 FLYER_DESCRIPTION_MAX_WORDS = 50
@@ -230,6 +230,51 @@ def execute_manual_query(connection, pg_cmd, tbl_header):
             df.loc[len(df),:] = row
 
         cursor.close()
+
+    except (Exception, DatabaseError) as error:
+        cursor.execute("ROLLBACK")
+        cursor.close()
+        raise Exception(f"Error while executing query data from PostgreSQL %s" % pg_cmd, error)
+
+    return df
+
+
+def execute_manual_batch_query(connection, pg_cmd, tbl_header, chunksize=None):
+    # Init connection + cursor
+    cursor = connection.cursor()
+
+    # Define the chunk size
+    if chunksize is None:
+        chunk_size = 10000
+
+    # Prep container
+    allDt = []
+    df = pd.DataFrame()
+
+    try:
+
+        offset = 0
+        while True:
+
+            # Make query
+            query = f"{pg_cmd} LIMIT {chunksize} OFFSET {offset};"
+            cursor.execute(query)
+            data = cursor.fetchall()
+
+            # If no more rows are returned, break the loop
+            if not data:
+                break
+
+            # Append to data
+            allDt += [pd.DataFrame(data=data, columns=tbl_header)]
+
+            # Increment the offset for the next chunk
+            offset += chunksize
+
+        cursor.close()
+
+        # Structure data
+        df = pd.concat(allDt)
 
     except (Exception, DatabaseError) as error:
         cursor.execute("ROLLBACK")
