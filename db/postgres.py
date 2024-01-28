@@ -3,7 +3,7 @@ import pandas as pd
 from io import StringIO
 from json import dumps
 from psycopg2 import DatabaseError, connect
-from apps.home.config.postgres import HDR_MAPPING
+#from apps.home.config.postgres import HDR_MAPPING
 from submodules.pytox.utils.data_structures import is_list_of_strings
 
 
@@ -379,7 +379,7 @@ def send_dataframe_to_postgres(df, connection, pipeline, POSTGRES_PIPELINES, ign
 # =========================== #
 # ===---- DATA FORMAT ----=== #
 # =========================== #
-def format_values_for_command(header, values, mapping=HDR_MAPPING):
+def format_values_for_command(header, values, mapping):
     # Prepare output
     output = []
     # Loop over header values

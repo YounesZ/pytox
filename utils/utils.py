@@ -1,6 +1,16 @@
+import re
 import pandas as pd
 from os import remove
 from decimal import Decimal
+
+
+# =====================================
+# ============= STRINGS ===============
+# =====================================
+def remove_chars_and_spaces(input_string, chars_to_remove):
+    pattern = "[" + re.escape("".join(chars_to_remove)) + "\s]"
+    result_string = re.sub(pattern, "", input_string)
+    return result_string
 
 
 # ==========================================
