@@ -6,6 +6,7 @@ def upload_object(local_folder, minio_bucket, minio_client, prefix=''):
 
     # Make sure it's not already in
     lsobj = minio_client.list_objects(minio_bucket)
+    lsobn = [i_.object_name for i_ in lsobj]
     upldd = 0
     alrdy = 0
     errtr = 0
@@ -15,7 +16,7 @@ def upload_object(local_folder, minio_bucket, minio_client, prefix=''):
             local_file_path = path.join(root, file)
             object_name = path.join(prefix, path.relpath(local_file_path, local_folder))
 
-            if file not in lsobj:
+            if file not in lsobn:
                 try:
                     minio_client.fput_object(
                         minio_bucket,
