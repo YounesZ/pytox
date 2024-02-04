@@ -139,7 +139,7 @@ def get_entry_by_id(connection, id, pipeline, POSTGRES_PIPELINES):
     return output
 
 
-def new_entry_in_table(connection, vdict, pipeline, POSTGRES_PIPELINES):
+def new_entry_in_table(connection, vdict, pipeline, POSTGRES_PIPELINES, mapping):
     # Get table name
     tbl_name = POSTGRES_PIPELINES[pipeline]['tbl_name']
     tbl_head = POSTGRES_PIPELINES[pipeline]['tbl_head']
@@ -148,7 +148,7 @@ def new_entry_in_table(connection, vdict, pipeline, POSTGRES_PIPELINES):
     remove_entry_from_table(connection, vdict['id'], pipeline, POSTGRES_PIPELINES)
 
     # Make new entry
-    values = format_values_for_command(tbl_head, vdict)
+    values = format_values_for_command(tbl_head, vdict, mapping)
     cursor = connection.cursor()
     succes = False
     try:
@@ -325,7 +325,7 @@ def execute_raw_query(cmd, connection):
 # ========================== #
 # ===---   Bulk I/O   ---=== #
 # ========================== #
-def send_dataframe_to_postgres(df, connection, pipeline, POSTGRES_PIPELINES, ignore_existing=False):
+def send_dataframe_to_postgres(df, connection, pipeline, POSTGRES_PIPELINES, mapping, ignore_existing=False):
 
     # Get table name
     tbl_name = POSTGRES_PIPELINES[pipeline]['tbl_name']
@@ -346,7 +346,7 @@ def send_dataframe_to_postgres(df, connection, pipeline, POSTGRES_PIPELINES, ign
 
     # --- Create a StringIO object
     # Make new entry
-    values = [format_values_for_command(tbl_head, df.loc[i_].to_dict()) for i_ in df.index]
+    values = [format_values_for_command(tbl_head, df.loc[i_].to_dict(), mapping) for i_ in df.index]
     # Turn values into StringIO
     output = StringIO()
     csv_writer = csv.writer(output)
