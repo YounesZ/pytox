@@ -36,8 +36,7 @@ def init_chrome_driver():
         options.add_argument("--headless")
         options.add_argument("--disable-gpu")
         options.add_argument( user_agent )
-
-        # options.add_argument("--no-sandbox")
+        options.add_argument("--no-sandbox")
         # options.add_argument("start-maximized")
         # options.add_argument("disable-infobars")
         # options.add_argument("--disable-extensions")
@@ -45,6 +44,3 @@ def init_chrome_driver():
         driver = webdriver.Chrome(options=options)
 
     return driver
-
-
-
