@@ -24,3 +24,8 @@ def create_folder(folder_path):
         print(f"Folder '{folder_path}' created successfully.")
     else:
         print(f"Folder '{folder_path}' already exists.")
+
+
+def remove_file(file_path):
+    if os.path.isfile(file_path):
+        os.remove(file_path)
