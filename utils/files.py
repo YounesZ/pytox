@@ -37,3 +37,8 @@ def list_files_with_extension(folder, extension):
     filtr = [i_[-nchar:]==extension for i_ in ls_files]
     ls_files = list( compress(ls_files, filtr) )
     return ls_files
+
+
+def remove_file(file_path):
+    if os.path.isfile(file_path):
+        os.remove(file_path)
