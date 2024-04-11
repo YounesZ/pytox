@@ -49,7 +49,7 @@ def find_proba_for_value(x, y, value):
     if len(x)==0:
         return 2
     elif value in x:
-        return np.where(x==value)[0][0]
+        return y_c[np.where(x==value)[0][0]]
     elif value > x[-1]:     # Hyper expensive
         return 1.
     elif value < x[0]:      # Hyper cheap
@@ -57,6 +57,8 @@ def find_proba_for_value(x, y, value):
 
     else: # interpolate
         lower = np.sum(value > x) - 1
+        xspan = x[lower+1] - x[lower]
         # X index
         p = (value-x[lower]) * y_c[lower+1] + (x[lower+1]-value) * y_c[lower]
+        p = p / xspan
         return p
