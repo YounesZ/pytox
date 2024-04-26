@@ -1,5 +1,6 @@
 import os
 from shutil import rmtree
+from itertools import compress
 
 
 def remove_folder_contents(folder_path):
@@ -24,6 +25,18 @@ def create_folder(folder_path):
         print(f"Folder '{folder_path}' created successfully.")
     else:
         print(f"Folder '{folder_path}' already exists.")
+
+
+def list_files_with_extension(folder, extension):
+
+    # List all files
+    ls_files = os.listdir(folder)
+
+    # Filter with extension
+    nchar = len(extension)
+    filtr = [i_[-nchar:]==extension for i_ in ls_files]
+    ls_files = list( compress(ls_files, filtr) )
+    return ls_files
 
 
 def remove_file(file_path):

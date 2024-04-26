@@ -239,7 +239,7 @@ def execute_manual_query(connection, pg_cmd, tbl_header):
     return df
 
 
-def execute_manual_batch_query(connection, pg_cmd, tbl_header, chunksize=None):
+def execute_manual_batch_query(connection, pg_cmd, tbl_header, chunksize=None, limit=9e9):
     # Init connection + cursor
     cursor = connection.cursor()
 
@@ -249,12 +249,13 @@ def execute_manual_batch_query(connection, pg_cmd, tbl_header, chunksize=None):
 
     # Prep container
     allDt = []
+    allSp = 0
     df = pd.DataFrame()
 
     try:
 
         offset = 0
-        while True:
+        while True and (allSp<limit):
 
             # Make query
             query = f"{pg_cmd} LIMIT {chunksize} OFFSET {offset};"
@@ -267,6 +268,7 @@ def execute_manual_batch_query(connection, pg_cmd, tbl_header, chunksize=None):
 
             # Append to data
             allDt += [pd.DataFrame(data=data, columns=tbl_header)]
+            allSp += len(data)
 
             # Increment the offset for the next chunk
             offset += chunksize
@@ -275,6 +277,7 @@ def execute_manual_batch_query(connection, pg_cmd, tbl_header, chunksize=None):
 
         # Structure data
         df = pd.concat(allDt)
+        df = df.reset_index().drop('index', axis=1)
 
     except (Exception, DatabaseError) as error:
         cursor.execute("ROLLBACK")
