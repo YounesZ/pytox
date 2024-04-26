@@ -197,6 +197,12 @@ def get_index_in_ordered_list(objval, vallist):
     return ix
 
 
+def sorted_indices(lst):
+    idx = [i[0] for i in sorted(enumerate(lst), key=lambda x: x[1])]
+    idx = idx[::-1]
+    return idx
+
+
 # =======================================
 # =========== PANDAS SERIES =============
 # =======================================

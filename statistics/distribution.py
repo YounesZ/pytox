@@ -21,12 +21,16 @@ def find_cumulative_threshold(x, y, thresh):
         return ix__, x[ix__], avg
     else: # interpolate
         lower = np.sum(thresh > y_c) - 1
-        # X index
-        ix = (thresh-y_c[lower]) * (lower+1) + (y_c[lower+1]-thresh) * lower
-        ix = ix / (y_c[lower + 1] - y_c[lower])
-        # X value
-        ii = (thresh - y_c[lower]) * x[lower + 1] + (y_c[lower + 1] - thresh) * x[lower]
-        ii = ii / (y_c[lower + 1] - y_c[lower])
+        if lower == -1:
+            ix = 1
+            ii = x[1]
+        else:
+            # X index
+            ix = (thresh-y_c[lower]) * (lower+1) + (y_c[lower+1]-thresh) * lower
+            ix = ix / (y_c[lower + 1] - y_c[lower])
+            # X value
+            ii = (thresh - y_c[lower]) * x[lower + 1] + (y_c[lower + 1] - thresh) * x[lower]
+            ii = ii / (y_c[lower + 1] - y_c[lower])
         return ix, ii, avg
 
 
