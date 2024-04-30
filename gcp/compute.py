@@ -3,7 +3,7 @@ from os import path, environ
 from dotenv import load_dotenv
 from google.cloud import compute_v1
 from google.oauth2 import service_account
-from apps.localvars import PATH_TO_CODE
+from apps.lib.localvars import PATH_TO_CODE
 
 load_dotenv()
 
@@ -33,19 +33,15 @@ def start_instance(gcp_client, request):
         print('Instance is already running - nothing to do')
         return status
 
-    if status == 'TERMINATED':
-        print('Instance is terminated - nothing to do')
-        return status
-
     while (status in ['PROVISIONING', 'STAGING', 'STOPPING', 'SUSPENDING']) and ((time.time() - timeSt)<timeAd):
         time.sleep(10)
         status = instance_status(gcp_client, request)
 
-    if status in ['STOPPED', 'SUSPENDED']:
+    if status in ['STOPPED', 'SUSPENDED', 'TERMINATED']:
         # Boot the instance
         response = gcp_client.start(request=request)
-        time.sleep(30)
-        status = instance_status() # MAKE SURE BUFFER IS SUFFICIENT TO FIRE UP INSTANCE
+        time.sleep(60)
+        status = instance_status(gcp_client, request) # MAKE SURE BUFFER IS SUFFICIENT TO FIRE UP INSTANCE
     elif status != 'RUNNING':
         print('Waited 60sec for instance to stabilize - timed out')
     else:
