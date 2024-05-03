@@ -264,6 +264,7 @@ def execute_manual_batch_query(connection, pg_cmd, tbl_header, chunksize=None, l
 
             # If no more rows are returned, break the loop
             if not data:
+                cursor.close()
                 break
 
             # Append to data
