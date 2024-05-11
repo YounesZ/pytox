@@ -264,7 +264,7 @@ def execute_manual_batch_query(connection, pg_cmd, tbl_header, chunksize=None, l
 
             # If no more rows are returned, break the loop
             if not data:
-                cursor.close()
+                cursor.execute("ROLLBACK")
                 break
 
             # Append to data
@@ -277,8 +277,9 @@ def execute_manual_batch_query(connection, pg_cmd, tbl_header, chunksize=None, l
         cursor.close()
 
         # Structure data
-        df = pd.concat(allDt)
-        df = df.reset_index().drop('index', axis=1)
+        if len(allDt)>0:
+            df = pd.concat(allDt)
+            df = df.reset_index().drop('index', axis=1)
 
     except (Exception, DatabaseError) as error:
         cursor.execute("ROLLBACK")
