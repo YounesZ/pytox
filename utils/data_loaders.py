@@ -1,9 +1,14 @@
 import pandas as pd
 from os import path
-from apps.lib.pytox.utils.utils import convertDatasetToNumeric
+from .utils import convertDatasetToNumeric
 
 
-def load_datafile(file_name='ClutchEngagment_FullDataset.csv', force_numeric=True, separator=';', decimal=',', path_to_assets=''):
+def load_datafile(file_name: str ='ClutchEngagment_FullDataset.csv',
+                  force_numeric: bool = True,
+                  separator: str =';',
+                  decimal: str =',',
+                  path_to_assets: str ='') -> pd.DataFrame:
+
     # Get file type
     file_path = path.join(path_to_assets, 'raw', file_name)
     # Loading

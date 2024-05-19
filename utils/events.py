@@ -1,8 +1,9 @@
 import shutil
 from os import path
 from csv import writer
+from typing import List, Optional, Union
 from psycopg2 import DatabaseError
-from datetime import datetime
+from time_stamps import datetime
 from itertools import islice
 
 
@@ -15,7 +16,10 @@ ACTION_LOG_DEFAULT_HEADER = ['TimeStamp', 'function', 'custom_message']
 # ==================================== #
 class BaseLog(object):
 
-    def __init__(self, header, log_dir, log_file):
+    def __init__(self,
+                 header: List[str],
+                 log_dir: str,
+                 log_file: str) -> None:
         # Check arguments
         assert log_dir is not None
         assert log_file is not None
@@ -37,7 +41,7 @@ class BaseLog(object):
         self.max_lines = 1000
         return
 
-    def write_entry(self, fields):
+    def write_entry(self, fields: List[str]) -> None:
 
         # Open the input and output files
         with open(self.log_path, 'r') as infile:
@@ -55,10 +59,14 @@ class BaseLog(object):
 
 class ErrorLog(BaseLog):
 
-    def __init__(self, log_dir=None, log_file=None):
+    def __init__(self,
+                 log_dir: Optional[str] = None,
+                 log_file: Optional[str] = None) -> None:
         super().__init__(ERROR_LOG_DEFAULT_HEADER, log_dir, log_file)
 
-    def new_entry(self, log_vars, custom_message='no message provided'):
+    def new_entry(self,
+                  log_vars: Union[List, Exception],
+                  custom_message: Optional[str] = 'no message provided') -> None:
 
         # Make sure logger object was initialized
         if not self.is_initialized:
@@ -98,10 +106,14 @@ class ErrorLog(BaseLog):
 
 class ActionLog(BaseLog):
 
-    def __init__(self, log_dir=None, log_file=None):
+    def __init__(self,
+                 log_dir: Optional[str] = None,
+                 log_file: Optional[str] = None) -> None:
         super().__init__(ACTION_LOG_DEFAULT_HEADER, log_dir, log_file)
 
-    def new_entry(self, caller_fcn=None, custom_message=None):
+    def new_entry(self,
+                  caller_fcn: Optional[str] = None,
+                  custom_message: Optional[str] = None) -> None:
         assert caller_fcn is not None
         assert custom_message is not None
 

@@ -1,7 +1,9 @@
 import numpy as np
 
 
-def compute_mean_abs_error(vec1, vec2):
+def compute_mean_abs_error(vec1: np.ndarray,
+                           vec2: np.ndarray) -> float:
+
     err = -1
     if (len(vec1)>0) and (len(vec1)==len(vec2)):
         # Convert vectors to np arrays

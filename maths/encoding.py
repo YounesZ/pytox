@@ -2,14 +2,14 @@ from hashlib import blake2s, blake2b
 
 SALT = "secret"
 
-def positive_hash(value):
+def positive_hash(value: str) -> str:
     # Make hash
     file_id = blake2s(value.encode())
     file_hs = file_id.digest().hex()
     return file_hs
 
 
-def letter_hash(value):
+def letter_hash(value: str) -> str:
     # Create a hash object using BLAKE2b algorithm
     hash_obj = blake2b(SALT.encode())
 

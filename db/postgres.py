@@ -1,9 +1,12 @@
 import csv
 import pandas as pd
+import psycopg2
+
 from io import StringIO
 from json import dumps
+from typing import Dict, Union, List, Tuple, Optional
 from psycopg2 import DatabaseError, connect
-#from apps.home.config.postgres import HDR_MAPPING
+from psycopg2.extensions import connection
 from submodules.pytox.utils.data_structures import is_list_of_strings
 
 
@@ -24,7 +27,11 @@ HDR_MAPPING = {'varchar': [str],
 # ========================== #
 # ===----    INIT    ----=== #
 # ========================== #
-def init_db_connection(pipeline, POSTGRES_PIPELINES, POSTGRES_SERVER_NAME, POSTGRES_SERVER_PORT):
+def init_db_connection(pipeline: str,
+                       POSTGRES_PIPELINES: Dict,
+                       POSTGRES_SERVER_NAME: str,
+                       POSTGRES_SERVER_PORT: str) -> connection:
+
         # Make connection
         db_name = POSTGRES_PIPELINES[pipeline]['db_name']
         connection = connect(host=POSTGRES_SERVER_NAME,
@@ -38,7 +45,10 @@ def init_db_connection(pipeline, POSTGRES_PIPELINES, POSTGRES_SERVER_NAME, POSTG
 # ========================== #
 # ===----   CREATE   ----=== #
 # ========================== #
-def create_table(connection, pipeline, POSTGRES_PIPELINES):
+def create_table(connection: connection,
+                 pipeline: str,
+                 POSTGRES_PIPELINES: Dict) -> None:
+
     # Make  sure table does not exist
     db_name = connection.info.dbname
     assert db_name == POSTGRES_PIPELINES[pipeline]['db_name']
@@ -65,7 +75,10 @@ def create_table(connection, pipeline, POSTGRES_PIPELINES):
     return
 
 
-def check_table_exists(connection, pipeline, POSTGRES_PIPELINES):
+def check_table_exists(connection: connection,
+                       pipeline: str,
+                       POSTGRES_PIPELINES: Dict) -> Union[bool, pd.DataFrame]:
+
     # Make cursor
     cursor = connection.cursor()
 
@@ -88,7 +101,10 @@ def check_table_exists(connection, pipeline, POSTGRES_PIPELINES):
 # ========================== #
 # ===----    I/O     ----=== #
 # ========================== #
-def check_entry_exists_in_table(connection, id, pipeline, POSTGRES_PIPELINES):
+def check_entry_exists_in_table(connection: connection,
+                                id: str,
+                                pipeline: str,
+                                POSTGRES_PIPELINES: Dict) -> Tuple[Union[bool, pd.DataFrame], List]:
     # Make cursor
     cursor = connection.cursor()
 
@@ -115,7 +131,10 @@ def check_entry_exists_in_table(connection, id, pipeline, POSTGRES_PIPELINES):
     return output, interx
 
 
-def get_entry_by_id(connection, id, pipeline, POSTGRES_PIPELINES):
+def get_entry_by_id(connection: connection,
+                    id: str,
+                    pipeline: str,
+                    POSTGRES_PIPELINES: Dict) -> Union[None, pd.DataFrame]:
 
     # Make cursor
     cursor = connection.cursor()
@@ -139,7 +158,12 @@ def get_entry_by_id(connection, id, pipeline, POSTGRES_PIPELINES):
     return output
 
 
-def new_entry_in_table(connection, vdict, pipeline, POSTGRES_PIPELINES, mapping):
+def new_entry_in_table(connection: connection,
+                       vdict: Dict,
+                       pipeline: str,
+                       POSTGRES_PIPELINES: Dict,
+                       mapping: Dict) -> bool:
+
     # Get table name
     tbl_name = POSTGRES_PIPELINES[pipeline]['tbl_name']
     tbl_head = POSTGRES_PIPELINES[pipeline]['tbl_head']
@@ -164,7 +188,11 @@ def new_entry_in_table(connection, vdict, pipeline, POSTGRES_PIPELINES, mapping)
     return succes
 
 
-def remove_entry_from_table(connection, id, pipeline, POSTGRES_PIPELINES):
+def remove_entry_from_table(connection: connection,
+                            id: str,
+                            pipeline: str,
+                            POSTGRES_PIPELINES: Dict) -> bool:
+
     # Check if entry is present
     tbl_name = POSTGRES_PIPELINES[pipeline]['tbl_name']
     success = True
@@ -183,7 +211,10 @@ def remove_entry_from_table(connection, id, pipeline, POSTGRES_PIPELINES):
     return success
 
 
-def clear_table(connection, pipeline, POSTGRES_PIPELINES):
+def clear_table(connection: connection,
+                pipeline: str,
+                POSTGRES_PIPELINES: Dict) -> bool:
+
     success = True
     tbl_name= POSTGRES_PIPELINES[pipeline]['tbl_name']
     if check_table_exists(connection, pipeline, POSTGRES_PIPELINES):
@@ -201,7 +232,9 @@ def clear_table(connection, pipeline, POSTGRES_PIPELINES):
     return success
 
 
-def read_full_table(connection, pipeline, POSTGRES_PIPELINES):
+def read_full_table(connection: connection,
+                    pipeline: str,
+                    POSTGRES_PIPELINES: Dict) -> pd.DataFrame:
 
     # Read pipeline info
     tbl_nm = POSTGRES_PIPELINES[pipeline]['tbl_name']
@@ -214,7 +247,10 @@ def read_full_table(connection, pipeline, POSTGRES_PIPELINES):
     return df
 
 
-def execute_manual_query(connection, pg_cmd, tbl_header):
+def execute_manual_query(connection: connection,
+                         pg_cmd: str,
+                         tbl_header: List) -> pd.DataFrame:
+
     # Init connection + cursor
     cursor = connection.cursor()
 
@@ -239,7 +275,12 @@ def execute_manual_query(connection, pg_cmd, tbl_header):
     return df
 
 
-def execute_manual_batch_query(connection, pg_cmd, tbl_header, chunksize=None, limit=9e9):
+def execute_manual_batch_query(connection: connection,
+                               pg_cmd: str,
+                               tbl_header: List,
+                               chunksize: Optional[int] = None,
+                               limit: Optional[int] = 9e9) -> pd.DataFrame:
+
     # Init connection + cursor
     cursor = connection.cursor()
 
@@ -289,7 +330,8 @@ def execute_manual_batch_query(connection, pg_cmd, tbl_header, chunksize=None, l
     return df
 
 
-def execute_manual_command(connection, pg_cmd):
+def execute_manual_command(connection: connection,
+                           pg_cmd: str) -> None:
     try:
         # Init connection + cursor
         cursor = connection.cursor()
@@ -307,7 +349,8 @@ def execute_manual_command(connection, pg_cmd):
     return
 
 
-def execute_raw_query(cmd, connection):
+def execute_raw_query(cmd: str,
+                      connection: connection) -> None:
 
     try:
         cursor = connection.cursor()
@@ -330,7 +373,12 @@ def execute_raw_query(cmd, connection):
 # ========================== #
 # ===---   Bulk I/O   ---=== #
 # ========================== #
-def send_dataframe_to_postgres(df, connection, pipeline, POSTGRES_PIPELINES, mapping, ignore_existing=False):
+def send_dataframe_to_postgres(df: pd.DataFrame,
+                               connection: connection,
+                               pipeline: str,
+                               POSTGRES_PIPELINES: Dict,
+                               mapping: Dict,
+                               ignore_existing: bool = False) -> Tuple[bool, int, str]:
 
     # Get table name
     tbl_name = POSTGRES_PIPELINES[pipeline]['tbl_name']
@@ -384,7 +432,10 @@ def send_dataframe_to_postgres(df, connection, pipeline, POSTGRES_PIPELINES, map
 # =========================== #
 # ===---- DATA FORMAT ----=== #
 # =========================== #
-def format_values_for_command(header, values, mapping):
+def format_values_for_command(header: List,
+                              values: Dict,
+                              mapping: Dict) -> tuple:
+
     # Prepare output
     output = []
     # Loop over header values

@@ -1,9 +1,15 @@
+from typing import Any, List, Tuple
+from selenium import webdriver
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 
 
-def is_parent(el1, el2):
+def is_parent(el1: Any,
+              el2: Any) -> Any:
+
+    # TODO: type elements
+
     xpath_expression = './/*'
     try:
         el1_children = find_elements_by_expression(el1, xpath_expression)
@@ -13,7 +19,9 @@ def is_parent(el1, el2):
     return el1_parent_el2
 
 
-def are_siblings(driver, el1, el2):
+def are_siblings(driver: webdriver,
+                 el1: Any,
+                 el2: Any) -> bool:
     are_same_level_siblings = driver.execute_script(
         'return arguments[0].parentNode === arguments[1].parentNode;',
         el1, el2
@@ -21,7 +29,7 @@ def are_siblings(driver, el1, el2):
     return are_same_level_siblings
 
 
-def same_level_siblings(element):
+def same_level_siblings(element: Any) -> List[Any]:
     # Get the parent element of D1
     parent_element = element.find_element_by_xpath('..')
 
@@ -31,7 +39,7 @@ def same_level_siblings(element):
     return same_level_siblings
 
 
-def previous_parent_wsiblings(element):
+def previous_parent_wsiblings(element: Any) -> List[Any]:
 
     cur_depth = 0
     max_depth = 15
@@ -52,14 +60,16 @@ def previous_parent_wsiblings(element):
     return siblings
 
 
-def previous_parent(element):
+def previous_parent(element: Any) -> Any:
     xpath_expression = '..'
     # Rewind 1 step back
     parent = find_elements_by_expression(element, xpath_expression)
     return parent
 
 
-def find_element_by_aria_label(driver, label_text):
+def find_element_by_aria_label(driver: webdriver,
+                               label_text: str) -> Any:
+
     # Construct the XPath expression to find the label element
     xpath_expression = f'//label[@aria-label="{label_text}"]'
 
@@ -70,7 +80,9 @@ def find_element_by_aria_label(driver, label_text):
     return matching_element
 
 
-def find_elements_by_role(driver, role_value):
+def find_elements_by_role(driver: webdriver,
+                          role_value: str) -> Any:
+
     # Construct the XPath expression to find elements with the specified role
     xpath_expression = f'//*[@role="{role_value}"]'
 
@@ -81,13 +93,16 @@ def find_elements_by_role(driver, role_value):
     return matching_element
 
 
-def find_elements_by_expression(driver, expression, delay=10):
+def find_elements_by_expression(driver: webdriver,
+                                expression: str,
+                                delay: int = 10) -> Any:
+
     matching_elements = WebDriverWait(driver, delay).until(
         EC.presence_of_all_elements_located((By.XPATH, expression)))
     return matching_elements
 
 
-def find_characteristics_from_description(current_element):
+def find_characteristics_from_description(current_element: Any) -> Tuple[Any, Any]:
     # - GET ABOUT THIS VEHICLE
     n_back = 12
     curr_n = 0
@@ -132,7 +147,8 @@ def find_characteristics_from_description(current_element):
     return current_parent, next_sibling
 
 
-def find_description_from_characteristics(current_element):
+def find_description_from_characteristics(current_element: Any) -> Tuple[Any, Any]:
+
     # - GET ABOUT THIS VEHICLE
     n_back = 12
     curr_n = 0
@@ -173,7 +189,9 @@ def find_description_from_characteristics(current_element):
     return current_parent, next_sibling
 
 
-def find_common_parents(driver, element1, element2):
+def find_common_parents(driver: webdriver,
+                        element1: Any,
+                        element2: Any) -> Tuple[Any, Any]:
 
     # Algo
         # 1 - rewind parent 1 until parent of element 2

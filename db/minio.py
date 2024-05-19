@@ -1,8 +1,13 @@
 from os import walk, path, sep
+from typing import List, Dict, Optional, Tuple, Any
 from minio.error import InvalidResponseError
 
+
 # Function to upload a folder to MinIO
-def upload_object(local_folder, minio_bucket, minio_client, prefix=''):
+def upload_object(local_folder: str,
+                  minio_bucket: str,
+                  minio_client: Any,
+                  prefix: Optional[str] = '') -> Tuple[int, int, int]:
 
     # Make sure it's not already in
     lsobj = minio_client.list_objects(minio_bucket)
@@ -35,7 +40,11 @@ def upload_object(local_folder, minio_bucket, minio_client, prefix=''):
     return upldd, alrdy, errtr
 
 
-def empty_bucket(bucket_name, client):
+def empty_bucket(bucket_name: str,
+                 client: Any):
+
+    # TODO: type minio client
+
     try:
         # List all objects in the bucket
         objects = client.list_objects(bucket_name, recursive=True)

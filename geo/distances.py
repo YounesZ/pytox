@@ -1,8 +1,9 @@
+from typing import Tuple
 from geopy.geocoders import Nominatim
 from geopy.distance import geodesic
 
 
-def compute_latitude_longitude(city):
+def compute_latitude_longitude(city: str) -> Tuple[float, float]:
     # Initialize the geolocator
     geolocator = Nominatim(user_agent='carsnatch-geo')
 
@@ -15,7 +16,9 @@ def compute_latitude_longitude(city):
     return lat1, lon1
 
 
-def distance_2_cities(city1, city2):
+def distance_2_cities(city1: str,
+                      city2: str) -> float:
+
     # City1: (latitude, longitude)
     # City2: (latitude, longitude)
 

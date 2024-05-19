@@ -1,9 +1,13 @@
 import os
 from shutil import rmtree
+from typing import List
 from itertools import compress
 
 
-def remove_folder_contents(folder_path):
+def remove_folder_contents(folder_path: str) -> None:
+
+    # TODO: type folder
+
     # Iterate over all files and subfolders in the given folder
     for item in os.listdir(folder_path):
         item_path = os.path.join(folder_path, item)
@@ -17,7 +21,7 @@ def remove_folder_contents(folder_path):
             rmtree(item_path)
 
 
-def create_folder(folder_path):
+def create_folder(folder_path: str) -> None:
     # Check if the folder does not exist
     if not os.path.exists(folder_path):
         # Create the folder
@@ -27,7 +31,8 @@ def create_folder(folder_path):
         print(f"Folder '{folder_path}' already exists.")
 
 
-def list_files_with_extension(folder, extension):
+def list_files_with_extension(folder: str,
+                              extension: str) -> List[str]:
 
     # List all files
     ls_files = os.listdir(folder)
@@ -39,6 +44,6 @@ def list_files_with_extension(folder, extension):
     return ls_files
 
 
-def remove_file(file_path):
+def remove_file(file_path: str) -> None:
     if os.path.isfile(file_path):
         os.remove(file_path)

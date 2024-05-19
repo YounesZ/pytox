@@ -1,13 +1,16 @@
 import re
 import pandas as pd
 from os import remove
+from typing import List, Union, Any, Optional
 from decimal import Decimal
 
 
 # =====================================
 # ============= STRINGS ===============
 # =====================================
-def remove_chars_and_spaces(input_string, chars_to_remove):
+def remove_chars_and_spaces(input_string: str,
+                            chars_to_remove: str) -> str:
+
     pattern = "[" + re.escape("".join(chars_to_remove)) + "\s]"
     result_string = re.sub(pattern, "", input_string)
     return result_string
@@ -16,14 +19,15 @@ def remove_chars_and_spaces(input_string, chars_to_remove):
 # ==========================================
 # ============= DATA FORMATS ===============
 # ==========================================
-def convertDatasetToNumeric(df):
+def convertDatasetToNumeric(df: pd.DataFrame) -> pd.DataFrame:
     # Convert each data of the dataset into numeric value (ex: NAN from CSV import)
     for c in df.columns:
         df[c] = pd.to_numeric(df[c])
     return df
 
 
-def decimal_to_numeric(dec, out_type=float):
+def decimal_to_numeric(dec: Union[Decimal, Any],
+                       out_type: Optional[Any] = float) -> Any:
     if isinstance(dec, Decimal):
         dec = out_type(dec)
     return dec
@@ -32,7 +36,10 @@ def decimal_to_numeric(dec, out_type=float):
 # ======================================
 # ============= FILE OPS ===============
 # ======================================
-def remove_file(file_path):
+def remove_file(file_path: str) -> bool:
+
+    # TODO: type filepath
+    
     done = False
     try:
         remove(file_path)

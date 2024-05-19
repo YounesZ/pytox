@@ -1,9 +1,11 @@
+from typing import Iterable
 
 
 # ==========================================
 # ============= DATA FORMATS ===============
 # ==========================================
-def get_host_type():
+def get_host_type() -> Iterable['local', 'cloud']:
+
     # ----------------
     # Specific imports
     from platform import node

@@ -1,7 +1,9 @@
 import datetime
 
 
-def get_last_week_date():
+def get_last_week_date() -> str:
+
+    # TODO: type date
 
     # Get current date
     cur = datetime.datetime.now() - datetime.timedelta(days=7)

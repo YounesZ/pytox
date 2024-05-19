@@ -1,7 +1,8 @@
 import requests
+from typing import List, Tuple
 
 
-def check_email_adress(email):
+def check_email_adress(email: str) -> Tuple[bool, str]:
     message = [True, 'email adress is OK']
     # Make sure it's a string
     if not isinstance(email, str):
@@ -19,7 +20,11 @@ def check_email_adress(email):
     return message
 
 
-def download_image(url, save_path):
+def download_image(url: str,
+                   save_path: str) -> None:
+
+    # TODO: type url and save path
+
     try:
         # Send a GET request to the URL
         response = requests.get(url)

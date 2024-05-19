@@ -1,7 +1,10 @@
 import numpy as np
+from typing import Tuple
 
 
-def find_cumulative_threshold(x, y, thresh):
+def find_cumulative_threshold(x: np.ndarray,
+                              y: np.ndarray,
+                              thresh: float) -> Tuple[int, float, float]:
     """
     This function finds the value in a x,y function that corresponds
     to a certain threshold of its cumulative distribution
@@ -34,7 +37,10 @@ def find_cumulative_threshold(x, y, thresh):
         return ix, ii, avg
 
 
-def find_proba_for_value(x, y, value):
+def find_proba_for_value(x: np.ndarray,
+                         y: np.ndarray,
+                         value: float) -> float:
+
     """
     This function finds the value in a x,y function that corresponds
     to a certain threshold of its cumulative distribution

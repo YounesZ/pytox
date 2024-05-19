@@ -1,10 +1,10 @@
 import numpy as np
 import pandas as pd
 from os import path, listdir
+from typing import Any, List, Tuple, Optional, Union, Dict
 from random import shuffle
-from typing import List
 from inspect import stack
-from datetime import datetime
+from time_stamps import datetime
 from itertools import compress
 
 
@@ -12,7 +12,12 @@ from itertools import compress
 # ==========================================
 # ============ DATA STRUCTURES =============
 # ==========================================
-def check_type(object, classcheck, path_to_code=''):
+def check_type(object: Any,
+               classcheck: Any,
+               path_to_code: str =' ') -> None:
+
+    # TODO: type classcheck
+
     if not isinstance(object, classcheck):
         # Find 2nd function in the stack
         stck = stack()
@@ -26,7 +31,12 @@ def check_type(object, classcheck, path_to_code=''):
     return
 
 
-def replicate_until(obj, n, shuffle=False):
+def replicate_until(obj: Any,
+                    n: int,
+                    shuffle: bool = False) -> Any:
+
+    # TODO: type input object
+
     # Check for type
     if isinstance(obj, list):
         obj = _replicate_list_until(obj, n, shuffle)
@@ -42,15 +52,20 @@ def replicate_until(obj, n, shuffle=False):
 # ========================================
 # ============ STRING CHAINS =============
 # ========================================
-def find_string_in_list(string, lst, is_string=True):
-    bool = [string in i_ for i_ in lst]
+def find_string_in_list(string: str,
+                        lst: List,
+                        is_string: bool = True) -> Tuple[List, List]:
+
+    bool_list = [string in i_ for i_ in lst]
     if is_string:
         elem = [i_ for i_ in lst if string in i_]
     else:
         elem = [i_ for i_ in lst if string not in i_]
-    return bool, elem
+    return bool_list, elem
 
-def capitalize_first(string):
+
+def capitalize_first(string: str) -> str:
+
     assert isinstance(string, str)
 
     string_C = string
@@ -58,7 +73,10 @@ def capitalize_first(string):
         string_C = string[0].upper() + string[1:].lower()
     return string_C
 
-def remove_from_string(string, torem):
+
+def remove_from_string(string: str,
+                       torem: str) -> str:
+
     # Make sure we can loop over strings to remove
     if not isinstance(torem, list):
         torem = list(torem)
@@ -75,7 +93,10 @@ def remove_from_string(string, torem):
 # ==========================================
 # =========== STRUCTURE CHECKS =============
 # ==========================================
-def check_input(X, y=None, x_type=List[pd.DataFrame]):
+def check_input(X: pd.DataFrame,
+                y: Optional[pd.DataFrame] = None,
+                x_type: Optional[Any] = List[pd.DataFrame]) -> Tuple[pd.DataFrame, Optional[pd.DataFrame]]:
+
     output = []
     for i_var in [X, y]:
         # Check input X
@@ -111,7 +132,9 @@ def check_input(X, y=None, x_type=List[pd.DataFrame]):
     return output[0], output[1]
 
 
-def convert_input(X, out_type=List[pd.DataFrame]):
+def convert_input(X: List[Union[pd.DataFrame, pd.Series, np.ndarray]],
+                  out_type: Optional[Any] = List[pd.DataFrame]) -> Any:
+
     # Checks
     is_list = isinstance(X, list)
     if is_list:
@@ -145,7 +168,7 @@ def convert_input(X, out_type=List[pd.DataFrame]):
 # ======================================
 # =========== DICTIONARIES =============
 # ======================================
-def serialize_dictionary(criteria):
+def serialize_dictionary(criteria: Dict) -> str:
     output = ''
     for i_ in criteria.keys():
         suffix = '-'.join([str(j_) for j_ in criteria[i_]])
@@ -154,7 +177,7 @@ def serialize_dictionary(criteria):
     return output
 
 
-def flip_dict(dico):
+def flip_dict(dico: Dict) -> Dict:
     flipped = {}
     for k, v in dico.items():
         for i_ in v:
@@ -165,7 +188,9 @@ def flip_dict(dico):
 # ======================================
 # =========== PYTHON LISTS =============
 # ======================================
-def _replicate_list_until(ls, n, do_shuffle):
+def _replicate_list_until(ls: List,
+                          n: int,
+                          do_shuffle: bool) -> List:
     # Compute number of replications
     n_rep = int(np.ceil(n / len(ls)))
     # Replicate structure
@@ -178,7 +203,7 @@ def _replicate_list_until(ls, n, do_shuffle):
     return lsrep
 
 
-def is_list_of_strings(lst):
+def is_list_of_strings(lst: List) -> bool:
     # Determine elements types
     is_str = [isinstance(i_, str) for i_ in lst]
     if all(is_str):
@@ -186,7 +211,9 @@ def is_list_of_strings(lst):
     else:
         return False
 
-def get_index_in_ordered_list(objval, vallist):
+
+def get_index_in_ordered_list(objval: float,
+                              vallist: List) -> int:
     # Check if object has a spot
     ix = None
     if objval < max(vallist):
@@ -197,7 +224,7 @@ def get_index_in_ordered_list(objval, vallist):
     return ix
 
 
-def sorted_indices(lst):
+def sorted_indices(lst: List) -> List:
     idx = [i[0] for i in sorted(enumerate(lst), key=lambda x: x[1])]
     idx = idx[::-1]
     return idx
@@ -206,7 +233,10 @@ def sorted_indices(lst):
 # =======================================
 # =========== PANDAS SERIES =============
 # =======================================
-def sample_as_distribution(srs, n_values, default_value=None):
+def sample_as_distribution(srs: pd.Series,
+                           n_values: int,
+                           default_value: Optional[Any] = None) -> List:
+
     # Prep data structure
     n_total= srs.sum()
 
@@ -225,7 +255,10 @@ def sample_as_distribution(srs, n_values, default_value=None):
     return distrib
 
 
-def _replicate_df_until(df, n, shuffle):
+def _replicate_df_until(df: pd.DataFrame,
+                        n: int,
+                        shuffle: bool) -> pd.DataFrame:
+
     # Compute number of replications
     n_rep = int( np.ceil(n / len(df)) )
 
@@ -252,7 +285,10 @@ def _replicate_df_until(df, n, shuffle):
 # ======================= #
 # ===---    I/O    ---=== #
 # ======================= #
-def append_csv(df, file_path):
+def append_csv(df: pd.DataFrame,
+               file_path: str) -> None:
+
+    # TODO: type filepath
 
     # If the file exists already, append data
     if path.isfile(file_path):
@@ -267,11 +303,14 @@ def append_csv(df, file_path):
     df_all.to_csv(file_path)
 
 
-def list_csv(folder):
+def list_csv(folder: str) -> Tuple[List[str], List[str]]:
+    # TODO: type folder
     return list_by_extension(folder, extension='.csv')
 
 
-def list_by_extension(folder, extension='.csv'):
+def list_by_extension(folder: str,
+                      extension: str = '.csv') -> Tuple[List[str], List[str]]:
+
     # List all files
     ls_files = listdir(folder)
     # Check extensions

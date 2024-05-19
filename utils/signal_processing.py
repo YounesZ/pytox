@@ -1,10 +1,18 @@
 import numpy as np
+from typing import List, Optional, Literal, Tuple
+
+import pandas as pd
 
 
 # ==========================================
 # ============ TIME SERIES FCN =============
 # ==========================================
-def ts_custom_split(df, svec=None, test=0.2, how='ordered', random_seed=42):
+def ts_custom_split(df: pd.DataFrame,
+                    svec: Optional[np.ndarray] = None,
+                    test: float = 0.2,
+                    how: Literal['ordered', 'shuffled'] = 'ordered',
+                    random_seed: Optional[int] = 42) -> Tuple[pd.DataFrame, pd.DataFrame, np.ndarray]:
+
     # This function performs train/test split on dataframes
     # in preparation for modelling/pipeline
     # Returns 2datatframes, the size of which is specified by the arguments TEST
@@ -32,7 +40,8 @@ def ts_custom_split(df, svec=None, test=0.2, how='ordered', random_seed=42):
     return xtrain, xtest, svec
 
 
-def get_sample_variables(df):
+def get_sample_variables(df: pd.DataFrame) -> List[str]:
+
     if ('firstSampleTime' in df) and ('lastSampleTime' in df):
         sample_vars = ['firstSampleTime', 'lastSampleTime']
     elif ('slipStartSampleTime' in df) and ('slipStopSampleTime' in df):

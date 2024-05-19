@@ -1,5 +1,6 @@
 import time
 from os import path, environ
+from typing import Tuple, Dict
 from dotenv import load_dotenv
 from google.cloud import compute_v1
 from google.oauth2 import service_account
@@ -8,7 +9,10 @@ from apps.lib.localvars import PATH_TO_CODE
 load_dotenv()
 
 
-def gcp_prepare_client():
+def gcp_prepare_client() -> Tuple[compute_v1.InstancesClient, Dict]:
+
+    # TODO: type GCP request
+
     # Initialize the Compute Engine client
     sak_path = path.join(PATH_TO_CODE, environ.get('SERVICE_ACCOUNT_KEY'))
     credentials = service_account.Credentials.from_service_account_file(sak_path)
@@ -23,7 +27,9 @@ def gcp_prepare_client():
     return compute_client, request
 
 
-def start_instance(gcp_client, request):
+def start_instance(gcp_client: compute_v1.InstancesClient,
+                   request: Dict) -> str:
+
     # Get status
     status = instance_status(gcp_client, request)
     timeAd = 60
@@ -51,7 +57,8 @@ def start_instance(gcp_client, request):
     return status
 
 
-def stop_instance(gcp_client, request):
+def stop_instance(gcp_client: compute_v1.InstancesClient,
+                  request: Dict) -> str:
     # Get status
     status = instance_status(gcp_client, request)
     timeAd = 60
@@ -87,7 +94,9 @@ def stop_instance(gcp_client, request):
     return response
 
 
-def instance_status(gcp_client, request):
+def instance_status(gcp_client: compute_v1.InstancesClient,
+                    request: Dict) -> str:
+
     # Get the status of the instance
     instance = gcp_client.get(project=request['project'],
                               zone=request['zone'],
