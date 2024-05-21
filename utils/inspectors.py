@@ -33,6 +33,24 @@ def get_all_functions_in_package(package_name: str, exclude_modules: List[str] =
     return functions
 
 
+def get_function_input_signature(fcn):
+    sig = inspect.signature(fcn)
+
+    # Print the signature
+    print(f"Signature: {sig}")
+
+    # Print details of each parameter
+    output = []
+    for param_name, param in sig.parameters.items():
+        # Get annotation
+        annotation = param.annotation
+        # Add to output
+        output += [{'name': param_name,
+                    'value': param,
+                    'typing': annotation}]
+    return output
+
+
 if __name__ == '__main__':
     # Example usage:
     excluded_modules = ["__init__.py"]
@@ -40,3 +58,5 @@ if __name__ == '__main__':
 
     for name, func in package_functions:
         print(f"Function name: {name}, Function: {func}")
+        print( get_function_input_signature(func) )
+        print('')
