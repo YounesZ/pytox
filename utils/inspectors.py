@@ -14,7 +14,7 @@ def get_all_functions_in_package(package_name: str, exclude_modules: List[str] =
 
     for root, _, files in os.walk(package_path):
         for file in files:
-            if file.endswith(".py") and file != "__init__.py":
+            if file.endswith(".py") and (file not in exclude_modules):
                 module_name = os.path.relpath(os.path.join(root, file), package_path)
                 module_name = module_name.replace(os.path.sep, ".").rsplit(".", 1)[0]
                 full_module_name = f"{package_name}.{module_name}"
@@ -26,7 +26,7 @@ def get_all_functions_in_package(package_name: str, exclude_modules: List[str] =
                     module = importlib.import_module(full_module_name)
                     for name, obj in inspect.getmembers(module, inspect.isfunction):
                         if obj.__module__ == full_module_name:
-                            functions.append((name, obj))
+                            functions.append((name, full_module_name, obj))
                 except ImportError as e:
                     print(f"Failed to import {full_module_name}: {e}")
 
@@ -35,9 +35,6 @@ def get_all_functions_in_package(package_name: str, exclude_modules: List[str] =
 
 def get_function_input_signature(fcn):
     sig = inspect.signature(fcn)
-
-    # Print the signature
-    print(f"Signature: {sig}")
 
     # Print details of each parameter
     output = []

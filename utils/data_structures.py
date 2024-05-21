@@ -4,7 +4,7 @@ from os import path, listdir
 from typing import Any, List, Tuple, Optional, Union, Dict
 from random import shuffle
 from inspect import stack
-from time_stamps import datetime
+from .time_stamps import get_last_week_date
 from itertools import compress
 
 
