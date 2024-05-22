@@ -3,7 +3,7 @@ from os import path
 from csv import writer
 from typing import List, Optional, Union
 from psycopg2 import DatabaseError
-from .time_stamps import get_last_week_date
+from datetime import datetime
 from itertools import islice
 
 

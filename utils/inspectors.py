@@ -1,12 +1,20 @@
 import os
 import inspect
 import importlib
-from typing import List, Callable, Tuple
+from typing import List, Any, Tuple
+from apps.lib.localvars import PATH_TO_CODE
 
 
-def get_all_functions_in_package(package_name: str, exclude_modules: List[str] = None) -> List[Tuple[str, Callable]]:
+def get_all_functions_in_package(package_name: str,
+                                 exclude_paths: List[str] = None,
+                                 exclude_modules: List[str] = None) -> List[Tuple[str, str, Any]]:
     if exclude_modules is None:
         exclude_modules = []
+
+    if exclude_paths is None:
+        exclude_paths = []
+    else:
+        exclude_paths = [os.path.join(PATH_TO_CODE, package_name, i_) for i_ in exclude_paths]
 
     functions = []
     package = importlib.import_module(package_name)
@@ -14,7 +22,7 @@ def get_all_functions_in_package(package_name: str, exclude_modules: List[str] =
 
     for root, _, files in os.walk(package_path):
         for file in files:
-            if file.endswith(".py") and (file not in exclude_modules):
+            if file.endswith(".py") and not any(i_ in root for i_ in exclude_paths) and (file not in exclude_modules):
                 module_name = os.path.relpath(os.path.join(root, file), package_path)
                 module_name = module_name.replace(os.path.sep, ".").rsplit(".", 1)[0]
                 full_module_name = f"{package_name}.{module_name}"
