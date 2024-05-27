@@ -4,7 +4,7 @@ from typing import Iterable
 # ==========================================
 # ============= DATA FORMATS ===============
 # ==========================================
-def get_host_type() -> Iterable['local', 'cloud']:
+def get_host_type() -> Iterable[str]:
 
     # ----------------
     # Specific imports
