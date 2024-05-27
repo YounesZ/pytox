@@ -1,7 +1,9 @@
 import numpy as np
 from typing import Tuple
+from submodules.pytox.utils.decorators import validate_arguments
 
 
+@validate_arguments
 def find_cumulative_threshold(x: np.ndarray,
                               y: np.ndarray,
                               thresh: float) -> Tuple[int, float, float]:
@@ -37,6 +39,7 @@ def find_cumulative_threshold(x: np.ndarray,
         return ix, ii, avg
 
 
+@validate_arguments
 def find_proba_for_value(x: np.ndarray,
                          y: np.ndarray,
                          value: float) -> float:

@@ -1,6 +1,8 @@
 import numpy as np
+from submodules.pytox.utils.decorators import validate_arguments
 
 
+@validate_arguments
 def compute_mean_abs_error(vec1: np.ndarray,
                            vec2: np.ndarray) -> float:
 

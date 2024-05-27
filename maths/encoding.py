@@ -1,7 +1,10 @@
 from hashlib import blake2s, blake2b
+from submodules.pytox.utils.decorators import validate_arguments
 
 SALT = "secret"
 
+
+@validate_arguments
 def positive_hash(value: str) -> str:
     # Make hash
     file_id = blake2s(value.encode())
@@ -9,6 +12,7 @@ def positive_hash(value: str) -> str:
     return file_hs
 
 
+@validate_arguments
 def letter_hash(value: str) -> str:
     # Create a hash object using BLAKE2b algorithm
     hash_obj = blake2b(SALT.encode())

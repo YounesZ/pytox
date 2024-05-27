@@ -7,7 +7,8 @@ from json import dumps
 from typing import Dict, Union, List, Tuple, Optional
 from psycopg2 import DatabaseError, connect
 from psycopg2.extensions import connection
-from submodules.pytox.utils.data_structures import is_list_of_strings
+from ..utils.decorators import validate_arguments
+from ..utils.data_structures import is_list_of_strings
 
 
 FLYER_DESCRIPTION_MAX_WORDS = 50
@@ -27,6 +28,7 @@ HDR_MAPPING = {'varchar': [str],
 # ========================== #
 # ===----    INIT    ----=== #
 # ========================== #
+@validate_arguments
 def init_db_connection(pipeline: str,
                        POSTGRES_PIPELINES: Dict,
                        POSTGRES_SERVER_NAME: str,
@@ -45,6 +47,7 @@ def init_db_connection(pipeline: str,
 # ========================== #
 # ===----   CREATE   ----=== #
 # ========================== #
+@validate_arguments
 def create_table(connection: connection,
                  pipeline: str,
                  POSTGRES_PIPELINES: Dict) -> None:
@@ -75,6 +78,7 @@ def create_table(connection: connection,
     return
 
 
+@validate_arguments
 def check_table_exists(connection: connection,
                        pipeline: str,
                        POSTGRES_PIPELINES: Dict) -> Union[bool, pd.DataFrame]:
@@ -101,8 +105,9 @@ def check_table_exists(connection: connection,
 # ========================== #
 # ===----    I/O     ----=== #
 # ========================== #
+@validate_arguments
 def check_entry_exists_in_table(connection: connection,
-                                id: str,
+                                id: Union[str, List[str]],
                                 pipeline: str,
                                 POSTGRES_PIPELINES: Dict) -> Tuple[Union[bool, pd.DataFrame], List]:
     # Make cursor
@@ -131,6 +136,7 @@ def check_entry_exists_in_table(connection: connection,
     return output, interx
 
 
+@validate_arguments
 def get_entry_by_id(connection: connection,
                     id: str,
                     pipeline: str,
@@ -158,6 +164,7 @@ def get_entry_by_id(connection: connection,
     return output
 
 
+@validate_arguments
 def new_entry_in_table(connection: connection,
                        vdict: Dict,
                        pipeline: str,
@@ -188,6 +195,7 @@ def new_entry_in_table(connection: connection,
     return succes
 
 
+@validate_arguments
 def remove_entry_from_table(connection: connection,
                             id: str,
                             pipeline: str,
@@ -211,6 +219,7 @@ def remove_entry_from_table(connection: connection,
     return success
 
 
+@validate_arguments
 def clear_table(connection: connection,
                 pipeline: str,
                 POSTGRES_PIPELINES: Dict) -> bool:
@@ -232,6 +241,7 @@ def clear_table(connection: connection,
     return success
 
 
+@validate_arguments
 def read_full_table(connection: connection,
                     pipeline: str,
                     POSTGRES_PIPELINES: Dict) -> pd.DataFrame:
@@ -247,9 +257,10 @@ def read_full_table(connection: connection,
     return df
 
 
+@validate_arguments
 def execute_manual_query(connection: connection,
                          pg_cmd: str,
-                         tbl_header: List) -> pd.DataFrame:
+                         tbl_header: Dict) -> pd.DataFrame:
 
     # Init connection + cursor
     cursor = connection.cursor()
@@ -275,9 +286,10 @@ def execute_manual_query(connection: connection,
     return df
 
 
+@validate_arguments
 def execute_manual_batch_query(connection: connection,
                                pg_cmd: str,
-                               tbl_header: List,
+                               tbl_header: Dict,
                                chunksize: Optional[int] = None,
                                limit: Optional[int] = 9e9) -> pd.DataFrame:
 
@@ -330,6 +342,7 @@ def execute_manual_batch_query(connection: connection,
     return df
 
 
+@validate_arguments
 def execute_manual_command(connection: connection,
                            pg_cmd: str) -> None:
     try:
@@ -349,6 +362,7 @@ def execute_manual_command(connection: connection,
     return
 
 
+@validate_arguments
 def execute_raw_query(cmd: str,
                       connection: connection) -> None:
 
@@ -373,6 +387,7 @@ def execute_raw_query(cmd: str,
 # ========================== #
 # ===---   Bulk I/O   ---=== #
 # ========================== #
+@validate_arguments
 def send_dataframe_to_postgres(df: pd.DataFrame,
                                connection: connection,
                                pipeline: str,
@@ -432,7 +447,8 @@ def send_dataframe_to_postgres(df: pd.DataFrame,
 # =========================== #
 # ===---- DATA FORMAT ----=== #
 # =========================== #
-def format_values_for_command(header: List,
+@validate_arguments
+def format_values_for_command(header: Dict,
                               values: Dict,
                               mapping: Dict) -> tuple:
 
@@ -442,7 +458,8 @@ def format_values_for_command(header: List,
     for i_ in header.keys():
         # Check if value has the right type
         assert isinstance(values, dict)
-        assert i_ in values.keys()
+        if not i_ in values.keys():
+            raise ValueError(f'Key {i_} not found in sample')
         # Assert type
         valtp = header[i_]['type']
         if '(' in header[i_]['type']:
