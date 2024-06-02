@@ -32,7 +32,7 @@ HDR_MAPPING = {'varchar': [str],
 def init_db_connection(pipeline: str,
                        POSTGRES_PIPELINES: Dict,
                        POSTGRES_SERVER_NAME: str,
-                       POSTGRES_SERVER_PORT: str) -> connection:
+                       POSTGRES_SERVER_PORT: int) -> connection:
 
         # Make connection
         db_name = POSTGRES_PIPELINES[pipeline]['db_name']
@@ -107,7 +107,7 @@ def check_table_exists(connection: connection,
 # ========================== #
 @validate_arguments
 def check_entry_exists_in_table(connection: connection,
-                                id: Union[str, List[str]],
+                                id: Union[str, List[str], int, List[int]],
                                 pipeline: str,
                                 POSTGRES_PIPELINES: Dict) -> Tuple[Union[bool, pd.DataFrame], List]:
     # Make cursor
@@ -197,7 +197,7 @@ def new_entry_in_table(connection: connection,
 
 @validate_arguments
 def remove_entry_from_table(connection: connection,
-                            id: str,
+                            id: Union[str,int],
                             pipeline: str,
                             POSTGRES_PIPELINES: Dict) -> bool:
 
@@ -289,7 +289,7 @@ def execute_manual_query(connection: connection,
 @validate_arguments
 def execute_manual_batch_query(connection: connection,
                                pg_cmd: str,
-                               tbl_header: Dict,
+                               tbl_header: List[str],
                                chunksize: Optional[int] = None,
                                limit: Optional[int] = 9e9) -> pd.DataFrame:
 

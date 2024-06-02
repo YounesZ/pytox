@@ -36,7 +36,7 @@ def is_instance_of_generic(value, expected_type):
     origin = getattr(expected_type, '__origin__', None)
     args = getattr(expected_type, '__args__', [])
 
-    if origin is None:
+    if (origin is None) or (len(args)==0):
         if expected_type is Any:
             return True
         # Base case: not a generic, just check the type
@@ -76,3 +76,12 @@ def is_instance_of_generic(value, expected_type):
         return isinstance(value, expected_type.__origin__)
 
     return isinstance(value, expected_type)
+
+
+def decorate_methods(decorator):
+    def class_decorator(cls):
+        for attr_name, attr_value in cls.__dict__.items():
+            if callable(attr_value):
+                setattr(cls, attr_name, decorator(attr_value))
+        return cls
+    return class_decorator

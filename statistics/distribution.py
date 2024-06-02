@@ -1,5 +1,5 @@
 import numpy as np
-from typing import Tuple
+from typing import Tuple, Union, List
 from submodules.pytox.utils.decorators import validate_arguments
 
 
@@ -40,8 +40,8 @@ def find_cumulative_threshold(x: np.ndarray,
 
 
 @validate_arguments
-def find_proba_for_value(x: np.ndarray,
-                         y: np.ndarray,
+def find_proba_for_value(x: Union[List, np.ndarray],
+                         y: Union[List, np.ndarray],
                          value: float) -> float:
 
     """

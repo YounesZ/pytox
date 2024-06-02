@@ -6,45 +6,25 @@ from random import shuffle
 from inspect import stack
 from .time_stamps import get_last_week_date
 from itertools import compress
+from submodules.pytox.utils.decorators import validate_arguments
 
 
 
 # ==========================================
 # ============ DATA STRUCTURES =============
 # ==========================================
-def check_type(object: Any,
-               classcheck: Any,
-               path_to_code: str =' ') -> None:
-
-    # TODO: type classcheck
-
-    if not isinstance(object, classcheck):
-        # Find 2nd function in the stack
-        stck = stack()
-        stck_file = [i_ for i_ in stck if path_to_code in i_.filename]
-        stck_file = stck_file[:2][-1].filename
-
-        raise TypeError('The function %s was called with the wrong argument type:'
-                        '\n\tinput argument type : %s'
-                        '\n\texpected type: %s.' % (stck_file, type(object), classcheck.__name__)
-                        )
-    return
-
-
-def replicate_until(obj: Any,
+@validate_arguments
+def replicate_until(obj: Union[List, pd.DataFrame],
                     n: int,
                     shuffle: bool = False) -> Any:
-
-    # TODO: type input object
 
     # Check for type
     if isinstance(obj, list):
         obj = _replicate_list_until(obj, n, shuffle)
     elif isinstance(obj, pd.DataFrame):
         obj = _replicate_df_until(obj, n, shuffle)
-    else:
-        raise TypeError('Unknown type for object to replicate: %s' % type(obj))
-    # Cut to right length
+
+     # Cut to right length
     obj = obj[:n]
     return obj
 
@@ -52,18 +32,6 @@ def replicate_until(obj: Any,
 # ========================================
 # ============ STRING CHAINS =============
 # ========================================
-def find_string_in_list(string: str,
-                        lst: List,
-                        is_string: bool = True) -> Tuple[List, List]:
-
-    bool_list = [string in i_ for i_ in lst]
-    if is_string:
-        elem = [i_ for i_ in lst if string in i_]
-    else:
-        elem = [i_ for i_ in lst if string not in i_]
-    return bool_list, elem
-
-
 def capitalize_first(string: str) -> str:
 
     assert isinstance(string, str)
@@ -88,81 +56,6 @@ def remove_from_string(string: str,
             x_str, x_len = string_l.index(i_l), len(i_l)
             string = string[:x_str] + string[x_str+x_len:]
     return string
-
-
-# ==========================================
-# =========== STRUCTURE CHECKS =============
-# ==========================================
-def check_input(X: pd.DataFrame,
-                y: Optional[pd.DataFrame] = None,
-                x_type: Optional[Any] = List[pd.DataFrame]) -> Tuple[pd.DataFrame, Optional[pd.DataFrame]]:
-
-    output = []
-    for i_var in [X, y]:
-        # Check input X
-        if i_var is None:
-            pass
-        elif isinstance(i_var, list) and (x_type is list):
-            pass
-        elif isinstance(i_var, pd.DataFrame) and (x_type is List[pd.DataFrame]):
-            i_var = [i_var]
-        elif isinstance(i_var, pd.DataFrame) and (x_type is pd.DataFrame):
-            pass
-        elif isinstance(i_var, np.ndarray) and (x_type is np.ndarray):
-            pass
-        elif isinstance(i_var, np.ndarray) and (x_type is List[np.ndarray]):
-            i_var = [i_var]
-        elif not isinstance(i_var, list) and (x_type is list):
-            i_var = [i_var]
-        elif isinstance(i_var, list) and isinstance(i_var[0], np.ndarray) and (x_type is List[np.ndarray]):
-            pass
-        elif isinstance(i_var, list) and isinstance(i_var[0], pd.DataFrame) and (x_type is List[pd.DataFrame]):
-            pass
-        elif (x_type is List[np.ndarray]) and (not isinstance(i_var, list) or not isinstance(i_var[0], np.ndarray)):
-            raise TypeError('The input X does not have the right format: should be %s'%x_type)
-        elif (x_type is List[pd.DataFrame]) and (not isinstance(i_var, list) or not isinstance(i_var[0], pd.DataFrame)):
-            raise TypeError('The input X does not have the right format: should be %s'%x_type)
-        else:
-            raise TypeError('Uncaught error - unrecognized input type')
-        output += [i_var]
-
-    # Check output
-    if (not output[1] is None) and (len(output[0])!=len(output[1])):
-        raise ValueError('X and y must have the same length')
-    return output[0], output[1]
-
-
-def convert_input(X: List[Union[pd.DataFrame, pd.Series, np.ndarray]],
-                  out_type: Optional[Any] = List[pd.DataFrame]) -> Any:
-
-    # Checks
-    is_list = isinstance(X, list)
-    if is_list:
-        # Check elements type
-        all_df = all(isinstance(i_, pd.DataFrame) for i_ in X)
-        all_sr = all(isinstance(i_, pd.Series) for i_ in X)
-        all_ar = all(isinstance(i_, np.ndarray) for i_ in X)
-        if out_type is List[pd.DataFrame]:
-            if all_sr:
-                X = [i_.to_frame() for i_ in X]
-            elif all_ar:
-                X = [pd.DataFrame(data=i_) for i_ in X]
-            elif all_df:
-                pass
-            else:
-                raise TypeError('Could not convert list to List[pd.Dataframe]')
-        elif out_type is List[np.ndarray]:
-            if all_sr or all_df:
-                X = [i_.astype(float).values for i_ in X]
-            elif all_ar:
-                pass
-            else:
-                raise TypeError('Could not convert list to List[pd.Dataframe]')
-        else:
-            raise TypeError('Can only convert a list to List[pd.DataFrame] or List[np.ndarray]')
-    else:
-        raise TypeError('Can only convert a lists')
-    return X
 
 
 # ======================================
