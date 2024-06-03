@@ -32,6 +32,7 @@ def replicate_until(obj: Union[List, pd.DataFrame],
 # ========================================
 # ============ STRING CHAINS =============
 # ========================================
+@validate_arguments
 def capitalize_first(string: str) -> str:
 
     assert isinstance(string, str)
@@ -42,8 +43,9 @@ def capitalize_first(string: str) -> str:
     return string_C
 
 
+@validate_arguments
 def remove_from_string(string: str,
-                       torem: str) -> str:
+                       torem: Union[List[str], str]) -> str:
 
     # Make sure we can loop over strings to remove
     if not isinstance(torem, list):
@@ -61,6 +63,7 @@ def remove_from_string(string: str,
 # ======================================
 # =========== DICTIONARIES =============
 # ======================================
+@validate_arguments
 def serialize_dictionary(criteria: Dict) -> str:
     output = ''
     for i_ in criteria.keys():
@@ -70,6 +73,7 @@ def serialize_dictionary(criteria: Dict) -> str:
     return output
 
 
+@validate_arguments
 def flip_dict(dico: Dict) -> Dict:
     flipped = {}
     for k, v in dico.items():
@@ -81,6 +85,7 @@ def flip_dict(dico: Dict) -> Dict:
 # ======================================
 # =========== PYTHON LISTS =============
 # ======================================
+@validate_arguments
 def _replicate_list_until(ls: List,
                           n: int,
                           do_shuffle: bool) -> List:
@@ -96,6 +101,7 @@ def _replicate_list_until(ls: List,
     return lsrep
 
 
+@validate_arguments
 def is_list_of_strings(lst: List) -> bool:
     # Determine elements types
     is_str = [isinstance(i_, str) for i_ in lst]
@@ -105,8 +111,9 @@ def is_list_of_strings(lst: List) -> bool:
         return False
 
 
+@validate_arguments
 def get_index_in_ordered_list(objval: float,
-                              vallist: List) -> int:
+                              vallist: List[float]) -> int:
     # Check if object has a spot
     ix = None
     if objval < max(vallist):
