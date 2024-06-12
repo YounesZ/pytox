@@ -2,20 +2,31 @@ import requests
 from typing import List, Tuple
 
 
+ALPHABET = 'abcdefghijklmnopqrstuvwxyz'
+
+
 def check_email_adress(email: str) -> Tuple[bool, str]:
     message = [True, 'email adress is OK']
     # Make sure it's a string
     if not isinstance(email, str):
         message = [False, 'email adress is not a string']
 
-    # Make sure it has @
-    if ('@' not in email) or ('.' not in email):
+    # Make sure it has 1ao1 @
+    if ('@' not in email) or ('.' not in email) or (len(email.split('@'))>2):
         message = [False, 'email adress is not a valid string']
+
+    # Make sure it has a prefix
+    if (email.split('@')[0] == ''):
+        message = [False, 'email adress has no prefix']
 
     # Make sure has suffix
     splt = email.split('.')
-    if any(len(i_)==0 for i_ in splt):
+    if (len(splt)!=2) or any(len(i_)==0 for i_ in splt):
         message = [False, 'email adress is not a valid string']
+
+    # Make sure suffix has only characters
+    if len( set(splt[-1].lower()).difference(ALPHABET) )>0:
+        message = [False, 'email adress suffix contains non letters']
 
     return message
 

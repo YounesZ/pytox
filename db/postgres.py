@@ -248,7 +248,7 @@ def read_full_table(connection: connection,
 
     # Read pipeline info
     tbl_nm = POSTGRES_PIPELINES[pipeline]['tbl_name']
-    tbl_hd = POSTGRES_PIPELINES[pipeline]['tbl_head']
+    tbl_hd = list(POSTGRES_PIPELINES[pipeline]['tbl_head'].keys())
 
     # Make query
     pg_cmd = f"select * from {tbl_nm}"
@@ -260,7 +260,7 @@ def read_full_table(connection: connection,
 @validate_arguments
 def execute_manual_query(connection: connection,
                          pg_cmd: str,
-                         tbl_header: Dict) -> pd.DataFrame:
+                         tbl_header: List) -> pd.DataFrame:
 
     # Init connection + cursor
     cursor = connection.cursor()

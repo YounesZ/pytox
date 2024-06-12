@@ -38,14 +38,3 @@ def ts_custom_split(df: pd.DataFrame,
     else:
         raise NotImplementedError('This split type is not implemented yet')
     return xtrain, xtest, svec
-
-
-def get_sample_variables(df: pd.DataFrame) -> List[str]:
-
-    if ('firstSampleTime' in df) and ('lastSampleTime' in df):
-        sample_vars = ['firstSampleTime', 'lastSampleTime']
-    elif ('slipStartSampleTime' in df) and ('slipStopSampleTime' in df):
-        sample_vars = ['slipStartSampleTime', 'slipStopSampleTime']
-    else:
-        raise ValueError("Could not find start/stop variables in dataframe")
-    return sample_vars

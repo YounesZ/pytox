@@ -56,6 +56,18 @@ def get_function_input_signature(fcn):
     return output
 
 
+def get_variables_in_module(module):
+    variables = []
+    for name in dir(module):
+        if not name.startswith('__'):  # Skip built-in attributes
+            value = getattr(module, name)
+            # Check if it's a variable (excluding functions, classes, and modules)
+            if not callable(value) and not isinstance(value, type(module)):
+                variables.append(name)
+    return variables
+
+
+
 if __name__ == '__main__':
     # Example usage:
     excluded_modules = ["__init__.py"]

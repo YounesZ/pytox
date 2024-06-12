@@ -45,5 +45,15 @@ def list_files_with_extension(folder: str,
 
 
 def remove_file(file_path: str) -> None:
-    if os.path.isfile(file_path):
+    done = False
+    try:
         os.remove(file_path)
+        print(f"File '{file_path}' has been deleted successfully.")
+        done = True
+    except FileNotFoundError:
+        print(f"File '{file_path}' does not exist.")
+    except PermissionError:
+        print(f"Permission denied. Unable to delete file '{file_path}'.")
+    except Exception as e:
+        print(f"An error occurred while deleting file '{file_path}': {str(e)}")
+    return done
