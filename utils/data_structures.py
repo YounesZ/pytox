@@ -193,14 +193,14 @@ def append_csv(df: pd.DataFrame,
     # If the file exists already, append data
     if path.isfile(file_path):
         # Load file
-        df_all = pd.read_csv(file_path, index_col=0)
+        df_all = pd.read_csv(file_path, index_col=False)
         # Concatenate dataframes
         df_all = pd.concat([df_all, df], ignore_index=True)
     else:   # create it otherwise
         df_all = df
 
     # Write csv
-    df_all.to_csv(file_path)
+    df_all.to_csv(file_path, index=False)
 
 
 def list_csv(folder: str) -> Tuple[List[str], List[str]]:
