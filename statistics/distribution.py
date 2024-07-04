@@ -23,19 +23,19 @@ def find_cumulative_threshold(x: np.ndarray,
     # Check if interpolation is needed
     if thresh in y_c:
         ix__ = np.where(y_c==thresh)[0][0]
-        return ix__, x[ix__], avg
+        return int(ix__), float(x[ix__]), avg
     else: # interpolate
         lower = np.sum(thresh > y_c) - 1
         if lower == -1:
-            ix = 1
-            ii = x[1]
+            ix = int(1)
+            ii = float(x[1])
         else:
             # X index
             ix = (thresh-y_c[lower]) * (lower+1) + (y_c[lower+1]-thresh) * lower
-            ix = ix / (y_c[lower + 1] - y_c[lower])
+            ix = int( ix / (y_c[lower + 1] - y_c[lower]) )
             # X value
             ii = (thresh - y_c[lower]) * x[lower + 1] + (y_c[lower + 1] - thresh) * x[lower]
-            ii = ii / (y_c[lower + 1] - y_c[lower])
+            ii = float(ii / (y_c[lower + 1] - y_c[lower]))
         return ix, ii, avg
 
 
@@ -60,13 +60,13 @@ def find_proba_for_value(x: Union[List, np.ndarray],
 
     # Check if interpolation is needed
     if len(x)==0:
-        return 2
+        return 2.0
     elif value in x:
         return y_c[np.where(x==value)[0][0]]
     elif value > x[-1]:     # Hyper expensive
-        return 1.
+        return 1.0
     elif value < x[0]:      # Hyper cheap
-        return 0.
+        return 0.0
 
     else: # interpolate
         lower = np.sum(value > x) - 1

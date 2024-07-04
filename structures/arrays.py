@@ -1,8 +1,9 @@
 import numpy as np
 from ...pytox.utils.decorators import validate_arguments
 
+
 @validate_arguments
-def shape_as_column_vector(vec: np.ndarray):
+def shape_as_column_vector(vec: np.ndarray) -> np.ndarray:
 
     shp = vec.shape
     assert len(shp)>0 and len(shp)<3

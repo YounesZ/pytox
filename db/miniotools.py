@@ -66,7 +66,7 @@ def upload_object(local_folder: str,
 
 @validate_arguments
 def create_bucket(bucket_name: str,
-                  client: Any):
+                  client: Any) -> str:
     try:
         # Check if the bucket already exists
         if not client.bucket_exists(bucket_name):
@@ -83,7 +83,7 @@ def create_bucket(bucket_name: str,
 
 @validate_arguments
 def empty_bucket(bucket_name: str,
-                 client: Any):
+                 client: Any) -> None:
 
     # TODO: type minio client
 
@@ -98,11 +98,12 @@ def empty_bucket(bucket_name: str,
         print(f"All objects in the bucket '{bucket_name}' have been removed.")
     except InvalidResponseError as err:
         print(f"Error: {err}")
+    return
 
 
 @validate_arguments
 def delete_bucket(bucket_name: str,
-                  client: Any):
+                  client: Any) -> str:
     try:
         # Check if the bucket exists
         if client.bucket_exists(bucket_name):

@@ -113,7 +113,7 @@ def is_list_of_strings(lst: List) -> bool:
 
 @validate_arguments
 def get_index_in_ordered_list(objval: float,
-                              vallist: List[Union[int, float]]) -> int:
+                              vallist: List[Union[int, float]]) -> Optional[int]:
     # Check if object has a spot
     ix = None
     if objval < max(vallist):

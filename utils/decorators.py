@@ -1,6 +1,6 @@
 import inspect
 from functools import wraps
-from typing import get_type_hints, Union, List, Dict, Tuple, Any
+from typing import get_type_hints, Union, List, Dict, Tuple, Any, Literal, get_origin
 
 
 def validate_arguments(func):
@@ -25,9 +25,29 @@ def validate_arguments(func):
             if name in type_hints:
                 expected_type = type_hints[name]
                 if not is_instance_of_generic(value, expected_type):
-                    raise TypeError(f"Argument '{name}' must be of type {expected_type.__name__}, but got {type(value).__name__}")
+                    raise TypeError(f"Argument '{name}' of function {func.__name__} in module {func.__module__} must be of type {expected_type.__name__}, but got {type(value).__name__}")
 
-        return func(*args, **kwargs)
+        # Get function output
+        results = func(*args, **kwargs)
+
+        # Prep output hints
+        output_hints = type_hints['return']
+        if is_instance_of_tuple(output_hints):
+            output_hints = output_hints.__args__
+            output_formatted = results
+        elif not isinstance(output_hints, list):
+            output_hints = [output_hints]
+            output_formatted = [results]
+        else:
+            raise TypeError(f'Unrecognized output hint for function {func.__name__} in module {func.__module}')
+
+        n_outpt = len(output_formatted)
+        for x_output, expected_type in zip(range(n_outpt), output_hints):
+            output = output_formatted[x_output]
+            if not is_instance_of_generic(output, expected_type):
+                raise TypeError(f"Output argument number '{x_output}' of function {func.__name__} in module {func.__module__} must be of type {expected_type.__name__}, but got {type(output).__name__}")
+
+        return results
 
     return wrapper
 
@@ -71,6 +91,10 @@ def is_instance_of_generic(value, expected_type):
             return (isinstance(value, tuple) and len(value) == len(args) and
                     all(is_instance_of_generic(v, t) for v, t in zip(value, args)))
 
+    if origin is Literal:
+        # Ensure value in available option
+        return value in args
+
     # Handle other generics
     if hasattr(expected_type, '__origin__'):
         return isinstance(value, expected_type.__origin__)
@@ -85,3 +109,13 @@ def decorate_methods(decorator):
                 setattr(cls, attr_name, decorator(attr_value))
         return cls
     return class_decorator
+
+
+def is_instance_of_tuple(hint):
+
+    if isinstance(hint, Tuple):
+        return True
+    if (get_origin(hint) is not None) and (hasattr(hint, '__args__')) and (isinstance(hint.__args__, tuple)) and ("typing.Tuple" in hint.__str__()):
+        return True
+
+    return False

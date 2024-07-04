@@ -1,5 +1,6 @@
 import requests
 from typing import List, Tuple
+from requests.models import Response
 
 
 ALPHABET = 'abcdefghijklmnopqrstuvwxyz'
@@ -54,4 +55,14 @@ def download_image(url: str,
         print(f"Error downloading image from {url}: {e}")
 
 
+def create_custom_response(code: int, msg: str) -> requests.models.Response:
+    response = Response()
+    response.status_code = 200  # Set the HTTP status code
+    response.headers = {
+        'Content-Type': 'application/json',
+        'Custom-Header': 'CustomHeaderValue'
+    }
+    response._content = b'{"key": "value"}'  # Set the response body (must be bytes)
+    response.url = 'http://example.com/api'  # Set the URL
 
+    return response

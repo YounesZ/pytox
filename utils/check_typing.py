@@ -1,5 +1,7 @@
+from typing import List
 
-def is_list_of_dictionaries(elem):
+
+def is_list_of_dictionaries(elem: List) -> bool:
     conds = False
     if isinstance(elem, list):
         cond1 = len(elem)>0
@@ -8,7 +10,7 @@ def is_list_of_dictionaries(elem):
     return conds
 
 
-def is_list_of_strings(elem):
+def is_list_of_strings(elem: List) -> bool:
     conds = False
     if isinstance(elem, list):
         cond1 = len(elem) > 0

@@ -81,7 +81,7 @@ def create_table(connection: connection,
 @validate_arguments
 def check_table_exists(connection: connection,
                        pipeline: str,
-                       POSTGRES_PIPELINES: Dict) -> Union[bool, pd.DataFrame]:
+                       POSTGRES_PIPELINES: Dict) -> bool:
 
     # Make cursor
     cursor = connection.cursor()
@@ -140,7 +140,7 @@ def check_entry_exists_in_table(connection: connection,
 def get_entry_by_id(connection: connection,
                     id: str,
                     pipeline: str,
-                    POSTGRES_PIPELINES: Dict) -> Union[None, pd.DataFrame]:
+                    POSTGRES_PIPELINES: Dict) -> Union[None, List]:
 
     # Make cursor
     cursor = connection.cursor()

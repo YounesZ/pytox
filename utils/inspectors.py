@@ -1,7 +1,8 @@
 import os
 import inspect
 import importlib
-from typing import List, Any, Tuple
+from types import FunctionType, ModuleType
+from typing import List, Any, Tuple, Dict, Union, TypeVar
 from apps.lib.localvars import PATH_TO_CODE
 
 
@@ -41,22 +42,24 @@ def get_all_functions_in_package(package_name: str,
     return functions
 
 
-def get_function_input_signature(fcn):
+def get_function_input_output_signature(fcn: FunctionType) -> Tuple[List[Dict], Union[type, TypeVar]]:
     sig = inspect.signature(fcn)
 
     # Print details of each parameter
-    output = []
+    input = []
     for param_name, param in sig.parameters.items():
         # Get annotation
         annotation = param.annotation
         # Add to output
-        output += [{'name': param_name,
+        input += [{'name': param_name,
                     'value': param,
                     'typing': annotation}]
-    return output
+
+    output = sig.return_annotation
+    return input, output
 
 
-def get_variables_in_module(module):
+def get_variables_in_module(module: ModuleType) -> List[str]:
     variables = []
     for name in dir(module):
         if not name.startswith('__'):  # Skip built-in attributes
@@ -75,5 +78,5 @@ if __name__ == '__main__':
 
     for name, func in package_functions:
         print(f"Function name: {name}, Function: {func}")
-        print( get_function_input_signature(func) )
+        print( get_function_input_output_signature(func) )
         print('')

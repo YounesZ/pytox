@@ -1,5 +1,7 @@
 import numpy as np
 from typing import List, Optional, Literal, Tuple
+from submodules.pytox.utils.decorators import validate_arguments
+
 
 import pandas as pd
 
@@ -7,8 +9,9 @@ import pandas as pd
 # ==========================================
 # ============ TIME SERIES FCN =============
 # ==========================================
+@validate_arguments
 def ts_custom_split(df: pd.DataFrame,
-                    svec: Optional[np.ndarray] = None,
+                    svec: Optional[np.ndarray] = np.array([]),
                     test: float = 0.2,
                     how: Literal['ordered', 'shuffled'] = 'ordered',
                     random_seed: Optional[int] = 42) -> Tuple[pd.DataFrame, pd.DataFrame, np.ndarray]:
@@ -17,9 +20,6 @@ def ts_custom_split(df: pd.DataFrame,
     # in preparation for modelling/pipeline
     # Returns 2datatframes, the size of which is specified by the arguments TEST
 
-    # Deterimine frame limits
-    if df is None:
-        return None, None, None
     # Make split
     n_smp = len(df)
     tstart = int( (1-test) * n_smp )
