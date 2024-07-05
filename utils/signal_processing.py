@@ -11,7 +11,7 @@ import pandas as pd
 # ==========================================
 @validate_arguments
 def ts_custom_split(df: pd.DataFrame,
-                    svec: Optional[np.ndarray] = np.array([]),
+                    svec: np.ndarray,
                     test: float = 0.2,
                     how: Literal['ordered', 'shuffled'] = 'ordered',
                     random_seed: Optional[int] = 42) -> Tuple[pd.DataFrame, pd.DataFrame, np.ndarray]:
@@ -29,7 +29,7 @@ def ts_custom_split(df: pd.DataFrame,
         xtrain = df.iloc[:tstart]
         xtest = df.iloc[tstart:]
     elif how=='shuffled':
-        if svec is None:
+        if len(svec) != len(df):
             svec = np.random.permutation(n_smp)
         # Slice X matrix
         xtrain = df.iloc[svec[:tstart]]
