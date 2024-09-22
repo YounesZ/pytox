@@ -116,10 +116,10 @@ def get_index_in_ordered_list(objval: float,
                               vallist: List[Union[int, float]]) -> Optional[int]:
     # Check if object has a spot
     ix = None
-    if objval < max(vallist):
+    if objval > min(vallist):
         # Get insertion index
         nvalues = vallist + [objval]
-        nvalues.sort()
+        nvalues.sort(reverse=True)
         ix = nvalues.index(objval)
     return ix
 
