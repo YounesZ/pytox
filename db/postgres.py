@@ -219,6 +219,30 @@ def remove_entry_from_table(connection: connection,
     return success
 
 
+def remove_entry_from_table_by_list(connection: connection,
+                            id: List,
+                            pipeline: str,
+                            POSTGRES_PIPELINES: Dict) -> bool:
+
+    # Check if entry is present
+    tbl_name = POSTGRES_PIPELINES[pipeline]['tbl_name']
+    success = True
+
+    # Delete entry
+    cursor = connection.cursor()
+    try:
+        cursor.execute(f"delete from {tbl_name} where id in ('{', '.join(id)}')")
+        cursor.close()
+        # Commit changes
+        connection.commit()
+    except (Exception, DatabaseError) as error:
+        print(error)
+        cursor.execute("ROLLBACK")
+        success = False
+
+    return success
+
+
 @validate_arguments
 def clear_table(connection: connection,
                 pipeline: str,
@@ -402,10 +426,10 @@ def send_dataframe_to_postgres(df: pd.DataFrame,
 
     # --- Ignore IDs already present
     if ignore_existing:
-        # Get table ids
+        # Get ids already in table
         _, all_ids = check_entry_exists_in_table(connection, list(df.id), pipeline, POSTGRES_PIPELINES)
         # Remove from df
-        df = df.loc[~df.id.isin(all_ids)]
+        remove_entry_from_table_by_list(connection, all_ids, pipeline, POSTGRES_PIPELINES)
 
     # --- EXIT if empty
     if len(df)==0:
