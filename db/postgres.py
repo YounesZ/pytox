@@ -506,7 +506,7 @@ def format_values_for_command(header: Dict,
         else:
             # Process string
             strvalue = values[i_]
-            if isinstance(values[i_], str):
+            if isinstance(values[i_], str) and (i_!='url'):
                 strvalue = values[i_].replace("'", " ")
             output.append(strvalue)
     return tuple(output)
