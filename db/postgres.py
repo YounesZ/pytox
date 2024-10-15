@@ -459,12 +459,12 @@ def send_dataframe_to_postgres(df: pd.DataFrame,
         # Commit changes
         connection.commit()
         succes = True
+        print(f'Synced dataframe with {db_name} db, {len(df)} entries made')
     except (Exception, DatabaseError) as error:
         cursor.execute("ROLLBACK")
         print(error)
     cursor.close()
 
-    print(f'Synced dataframe with {db_name} db, {len(df)} entries made')
     return succes, len(df), db_name
 
 
