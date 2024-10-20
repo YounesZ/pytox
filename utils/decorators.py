@@ -1,6 +1,6 @@
 import inspect
 from functools import wraps
-from typing import get_type_hints, Union, List, Dict, Tuple, Any, Literal, get_origin
+from typing import get_type_hints, Union, List, Dict, Tuple, Any, Literal, get_origin, get_args
 
 
 def validate_arguments(func):
@@ -53,8 +53,8 @@ def validate_arguments(func):
 
 
 def is_instance_of_generic(value, expected_type):
-    origin = getattr(expected_type, '__origin__', None)
-    args = getattr(expected_type, '__args__', [])
+    origin = get_origin(expected_type)
+    args = get_args(expected_type)
 
     if (origin is None) or (len(args)==0):
         if expected_type is Any:
@@ -78,7 +78,7 @@ def is_instance_of_generic(value, expected_type):
     # Handle Dict
     if origin in (dict, Dict):
         cond = isinstance(value, dict)
-        if len(args)>0:
+        if (len(args)>0):
             cond = cond and (all(is_instance_of_generic(k, args[0]) for k in value.keys()) and
                              all(is_instance_of_generic(v, args[1]) for v in value.values()))
         return cond

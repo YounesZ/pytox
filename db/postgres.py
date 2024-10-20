@@ -30,7 +30,7 @@ HDR_MAPPING = {'varchar': [str],
 # ========================== #
 @validate_arguments
 def init_db_connection(pipeline: str,
-                       POSTGRES_PIPELINES: Dict,
+                       POSTGRES_PIPELINES: dict,
                        POSTGRES_SERVER_NAME: str,
                        POSTGRES_SERVER_PORT: int) -> connection:
 
