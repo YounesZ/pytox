@@ -43,6 +43,8 @@ class BaseLog(object):
         # Write the trimmed lines back to the file
         with open(self.log_path, 'w') as file:
             file.writelines(trimmed_lines)
+
+
 class ErrorLog(BaseLog):
     def __init__(self, log_dir=None, log_file=None):
         super().__init__(ERROR_LOG_DEFAULT_HEADER, log_dir, log_file)
@@ -77,6 +79,8 @@ class ErrorLog(BaseLog):
         # --- Manage log file size
         self.write_entry(output)
         return
+
+
 class ActionLog(BaseLog):
     def __init__(self, log_dir=None, log_file=None):
         super().__init__(ACTION_LOG_DEFAULT_HEADER, log_dir, log_file)
