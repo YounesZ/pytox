@@ -106,7 +106,8 @@ class ActionLog(BaseLog):
 
 
 if __name__ == '__main__':
-    from apps.localvars import PATH_TO_LOGS
+    from apps.lib.localvars import PATH_TO_LOGS
+
     # --- TEST ACTION LOG
     """
     actionLog = ActionLog(PATH_TO_LOGS, 'test_actions.csv')
