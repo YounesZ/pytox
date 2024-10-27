@@ -231,10 +231,12 @@ def remove_entry_from_table_by_list(connection: connection,
     # Delete entry
     cursor = connection.cursor()
     try:
-        cursor.execute(f"delete from {tbl_name} where id in ('{', '.join(id)}')")
-        cursor.close()
+        ls_structured = [f"'{i_}'" for i_ in id]
+        cursor.execute(f"delete from public.{tbl_name} where id in ({', '.join(ls_structured)});")
         # Commit changes
         connection.commit()
+        # Close cursor
+        cursor.close()
     except (Exception, DatabaseError) as error:
         print(error)
         cursor.execute("ROLLBACK")
