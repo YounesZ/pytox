@@ -26,6 +26,23 @@ def create_minio_client() -> Union[Minio, None]:
         return None
 
 
+def upload_file(minio_client, minio_bucket, file_path, file_name=None):
+
+    try:
+        minio_client.fput_object(
+            minio_bucket,
+            file_name,
+            file_path
+        )
+        upldd = 1
+        print(f"Uploaded {file_path} to {minio_bucket}/{file_name}")
+    except InvalidResponseError as err:
+        print(err)
+        upldd = 0
+
+    return upldd
+
+
 # Function to upload a folder to MinIO
 @validate_arguments
 def upload_object(local_folder: str,
@@ -46,17 +63,13 @@ def upload_object(local_folder: str,
             object_name = path.join(prefix, path.relpath(local_file_path, local_folder))
 
             if file not in lsobn:
-                try:
-                    minio_client.fput_object(
-                        minio_bucket,
-                        object_name,
-                        local_file_path
-                    )
-                    upldd += 1
-                    print(f"Uploaded {local_file_path} to {minio_bucket}/{object_name}")
-                except InvalidResponseError as err:
-                    print(err)
-                    errtr += 1
+
+                # Upload file
+                rslt = upload_file(minio_client, minio_bucket, local_file_path, file_name=object_name)
+
+                # Update counts
+                upldd += rslt
+                errtr += 1-rslt
 
             else:
                 alrdy += 1
