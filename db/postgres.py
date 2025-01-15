@@ -431,7 +431,8 @@ def send_dataframe_to_postgres(df: pd.DataFrame,
         # Get ids already in table
         _, all_ids = check_entry_exists_in_table(connection, list(df.id), pipeline, POSTGRES_PIPELINES)
         # Remove from df
-        remove_entry_from_table_by_list(connection, all_ids, pipeline, POSTGRES_PIPELINES)
+        if len(all_ids)>0:
+            remove_entry_from_table_by_list(connection, all_ids, pipeline, POSTGRES_PIPELINES)
 
     # --- EXIT if empty
     if len(df)==0:
