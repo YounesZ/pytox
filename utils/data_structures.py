@@ -114,10 +114,19 @@ def is_list_of_strings(lst: List) -> bool:
 @validate_arguments
 def get_index_in_ordered_list(objval: float,
                               vallist: List[Union[int, float]]) -> Optional[int]:
-    # Check if object has a spot
+    """
+    This function checks in which position the value OBJVAL occupies in the
+    ordered vector VALLIST.
+        - rule1 : The vector is ordered is descending order such that highest
+                  value occupies position 0.
+        - rule2 : If OBJVAL is smaller than the min onf VALLIST, it should
+                  occupy no position in the vector and the output index is
+                  None
+    """
+
+    # Get insertion index
     ix = None
     if objval > min(vallist):
-        # Get insertion index
         nvalues = vallist + [objval]
         nvalues.sort(reverse=True)
         ix = nvalues.index(objval)
