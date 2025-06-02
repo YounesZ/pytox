@@ -1,6 +1,7 @@
 import os
 from shutil import rmtree
-from typing import List
+from typing import List, Optional
+from datetime import datetime
 from itertools import compress
 
 
@@ -57,3 +58,36 @@ def remove_file(file_path: str) -> None:
     except Exception as e:
         print(f"An error occurred while deleting file '{file_path}': {str(e)}")
     return done
+
+
+def list_files_with_date(min_date: datetime,
+                         max_date: datetime,
+                         region: Optional[str] = None,
+                         scraper: Optional[str] = None,
+                         folder: str = ''):
+
+    # List all files in data folder
+    ls_files = list_files_with_extension(folder, '.csv')
+
+    # Split file name
+    ls_regions = [i_.split('_')[0] if i_.count('_')==3 else 'other' for i_ in ls_files]
+    ls_scrapers = [i_.split('_')[1] if i_.count('_') == 3 else 'other' for i_ in ls_files]
+    ls_dates = [i_.split('_')[2] if i_.count('_')==3 else '21000101' for i_ in ls_files]
+
+    # --- Filter with dates
+    # Format dates
+    ls_dates = [datetime(year=int(i_[:4]), month=int(i_[4:6]), day=int(i_[6:8])) for i_ in ls_dates]
+
+    # Filter dates
+    fltr_files = [(i_<=max_date) & (i_>=min_date) for i_ in ls_dates]
+
+    # --- Filter with region
+    if not region is None:
+        fltr_files = [j_ & (i_ == region) for i_, j_ in zip(ls_regions, fltr_files)]
+
+    if not scraper is None:
+        fltr_files = [j_ & (i_ == scraper) for i_, j_ in zip(ls_scrapers, fltr_files)]
+
+    ok_files = [i_ for i_, j_ in zip(ls_files, fltr_files) if j_]
+
+    return ok_files
