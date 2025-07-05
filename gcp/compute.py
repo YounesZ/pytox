@@ -2,9 +2,9 @@ import time
 from os import path, environ
 from typing import Tuple, Dict
 from dotenv import load_dotenv
+from config import PATH_TO_CODE
 from google.cloud import compute_v1
 from google.oauth2 import service_account
-from apps.lib.localvars import PATH_TO_CODE
 
 load_dotenv()
 

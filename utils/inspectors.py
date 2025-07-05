@@ -2,8 +2,8 @@ import os
 import inspect
 import importlib
 from types import FunctionType, ModuleType
+from config import PATH_TO_CODE
 from typing import List, Any, Tuple, Dict, Union, TypeVar
-from apps.lib.localvars import PATH_TO_CODE
 
 
 def get_all_functions_in_package(package_name: str,

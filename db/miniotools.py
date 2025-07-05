@@ -1,10 +1,11 @@
 from os import walk, path, getenv
 from minio import Minio, S3Error
 from dotenv import load_dotenv
+from config import PATH_TO_CODE
 from typing import Union, Optional, Tuple, Any
 from minio.error import InvalidResponseError
 from ..utils.decorators import validate_arguments
-from apps.lib.localvars import MINIO_SERVER_URL, MINIO_SECURE_CLIENT, PATH_TO_CODE
+from apps.lib.localvars import MINIO_SERVER_URL, MINIO_SECURE_CLIENT
 
 
 # GET KEY
